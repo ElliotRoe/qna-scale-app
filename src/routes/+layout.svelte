@@ -1,22 +1,52 @@
 <script>
-	import '../app.css';
-	import Nav from '$lib/Nav.svelte';
-	import Header from '$lib/Header.svelte';
-	import Footer from '$lib/Footer.svelte';
+	import Header from './Header.svelte';
+	import './styles.css';
 </script>
 
-<svelte:head>
-	<title>SvelteKit Deployment Configuration</title>
-	<meta name="description" content="Learn how to configuration your SvelteKit app to use Edge Functions, Serverless Functions, and Incremental Static Regeneration on Vercel" />
-</svelte:head>
-
-<div class="px-8 lg:px-0 h-screen flex flex-col justify-between">
+<div class="app">
 	<Header />
-	<div class="flex-grow w-full max-w-4xl mx-auto flex flex-col md:flex-row">
-		<Nav />
-		<div class="md:ml-12">
-			<slot />
-		</div>
-	</div>
-	<Footer />
+
+	<main>
+		<slot />
+	</main>
+
+	<footer>
+	</footer>
 </div>
+
+<style>
+	.app {
+		display: flex;
+		flex-direction: column;
+		min-height: 100vh;
+	}
+
+	main {
+		flex: 1;
+		display: flex;
+		flex-direction: column;
+		padding: 1rem;
+		width: 100%;
+		max-width: 64rem;
+		margin: 0 auto;
+		box-sizing: border-box;
+	}
+
+	footer {
+		display: flex;
+		flex-direction: column;
+		justify-content: center;
+		align-items: center;
+		padding: 12px;
+	}
+
+	footer a {
+		font-weight: bold;
+	}
+
+	@media (min-width: 480px) {
+		footer {
+			padding: 12px 0;
+		}
+	}
+</style>
