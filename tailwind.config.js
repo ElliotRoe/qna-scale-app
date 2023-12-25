@@ -56,6 +56,12 @@ const config = {
 			},
 			fontFamily: {
 				sans: [...fontFamily.sans]
+			},
+			spacing: {
+				app: '64rem'
+			},
+			maxWidth: {
+				app: '64rem'
 			}
 		}
 	}

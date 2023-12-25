@@ -9,11 +9,11 @@
 </svelte:head>
 
 <section>
-	<div class="flex flex-row justify-center items-center h-screen">
+	<div class="flex flex-row justify-center items-center h-screen max-w-app">
 		<div class="flex flex-col space-y-5">
 			<h1 class="text-4xl font-bold font-soft">Engage synchronous distributed classrooms at scale</h1>
 			<a href="create">
-				<Button><h4 class="text-xl">Try Now</h4></Button>
+				<Button>Try Now</Button>
 			</a>
 		</div>
 		<div class="shadow-sm border rounded-xl p-10 py-20">
