@@ -9,15 +9,22 @@
     import { toDataURL } from 'qrcode';
 
     let copied = false;
-    export let domain = "QNA.com";
-    export let sessionPass = "123456";
+    export let sessionPass: string;
+    export let sessionId: string | null;
+    export let displayName: string;
+
+    const joinURL = (passcode: string, sessionId: string) => {
+        return `${window.location.origin}/join?sessionId=${sessionId}&passcode=${passcode}`;
+    }
 
     let qrCodeDataURL = "";
 
     $: {
-        toDataURL(`${domain}/${sessionPass}`, { scale: 12, errorCorrectionLevel: 'H'}).then((dataUrl: string) => {
-            qrCodeDataURL = dataUrl;
-        });
+        if (sessionId && sessionPass) {
+            toDataURL(joinURL(sessionPass, sessionId), { scale: 12, errorCorrectionLevel: 'H'}).then((dataUrl: string) => {
+                qrCodeDataURL = dataUrl;
+            });
+        }
     }
 
     function copyToClipboard(text:string) {
@@ -34,7 +41,7 @@
         <div class="space-y-5">
             <div>
                 <h4 class="text-xl font-medium text-slate-600">Go to</h4>
-                <h1 class="text-6xl font-bold flex flex-row space-x-1">{domain}</h1>
+                <h1 class="text-6xl font-bold flex flex-row space-x-1">{`${displayName}'s Session`}</h1>
             </div>
             <div>
                 <h4 class="text-xl font-medium text-slate-600 mb-2">Join with session code</h4>
@@ -45,9 +52,10 @@
                 </h1>
             </div>
         </div>
-        <Button variant="outline" class="flex flex-row space-x-2" on:click={()=>{
+        <Button variant="outline" disabled={!sessionId} class="flex flex-row space-x-2" on:click={()=>{
+            if (sessionId === null) return;
             copied = true;
-            copyToClipboard(`${domain}/${sessionPass}`);
+            copyToClipboard(joinURL(sessionPass, sessionId));
         }}>
             {#if !copied}
                 <Copy/>
@@ -66,8 +74,8 @@
     <div class="h-full flex flex-col grow">
         <h4 class="text-xl font-medium text-slate-600 mb-2 grow-0">Scan</h4>
         {#if qrCodeDataURL}
-        <div class="grow bg-contain bg-center bg-no-repeat qr-code"
-            style="background-image: url('{qrCodeDataURL}'); background-size: 132%;"
+        <div class="grow bg-contain bg-center bg-no-repeat qr-code shadow-md border rounded-xl"
+            style="background-image: url('{qrCodeDataURL}');"
         />
         {:else}
         <Skeleton class="grow"/>

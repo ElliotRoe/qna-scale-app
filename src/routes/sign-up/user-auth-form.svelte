@@ -5,6 +5,7 @@
 	import { cn } from "$lib/utils";
     import { auth, microsoftAuthProvider } from '$lib/firebase';
 	import { getRedirectResult, signInWithRedirect } from "firebase/auth";
+    import { createNewSession } from "$lib/session-management";
 
     import {goto} from '$app/navigation';
 	import { onMount } from "svelte";
@@ -26,8 +27,17 @@
     }
 
     onMount(async () => {
-        const result = await getRedirectResult(auth);
-        if (result?.user) {
+        const authUser = auth.currentUser;
+        let userId: string | null = null;
+        if (authUser) {
+            userId = authUser.uid;
+        } else {
+            const result = await getRedirectResult(auth);
+            if (result?.user) {
+                userId = result.user.uid;
+            }
+        }
+        if (userId) {
             goto('/create');
         }
     });
@@ -40,39 +50,4 @@
         </svg>
 		<p>Microsoft</p>
 	</Button>
-	<div class="relative">
-		<div class="absolute inset-0 flex items-center">
-			<span class="w-full border-t" />
-		</div>
-		<div class="relative flex justify-center text-xs uppercase">
-			<span class="bg-background px-2 text-muted-foreground">
-				Or continue with
-			</span>
-		</div>
-	</div>
-    <form on:submit|preventDefault={onSubmit}>
-		<div class="grid gap-2">
-            <p class="text-sm text-muted-foreground">
-                Enter your email below to create your account
-            </p>
-			<div class="grid gap-1">
-				<Label class="sr-only" for="email">Email</Label>
-				<Input
-					id="email"
-					placeholder="name@example.com"
-					type="email"
-					autocapitalize="none"
-					autocomplete="email"
-					autocorrect="off"
-					disabled={isLoading}
-				/>
-			</div>
-			<Button class="w-full" disabled={isLoading}>
-				{#if isLoading}
-                    <p>loading</p>
-				{/if}
-				Sign In with Email
-			</Button>
-		</div>
-	</form>
 </div>

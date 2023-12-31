@@ -1,21 +1,22 @@
 import { db } from '$lib/firebase';
-import { doc, setDoc } from 'firebase/firestore';
-import { randomBytes } from 'crypto';
+import { collection, addDoc, setDoc, doc } from 'firebase/firestore';
+import { randomBytes, hashData } from '$lib/crypto-util';
 
 type SessionMeta = {
 	authorId: string;
 	authorDisplayName: string;
 	authenticatedUserIds: string[];
 	question: string;
-	createdAt: Date;
-	seed: number;
-	updatedAt: Date;
+	createdAt: number;
+	seed: string;
+	updatedAt: number;
+	totpInterval: number;
 };
 
 const generateSeed = () => {
-	const buffer = randomBytes(6);
-	const number = parseInt(buffer.toString('hex'), 16);
-	return number;
+	const buffer = randomBytes(32);
+	const seed = buffer.toString().replaceAll(',', '');
+	return seed;
 };
 
 export const createNewSession = async (
@@ -23,40 +24,86 @@ export const createNewSession = async (
 	userId: string,
 	authorDisplayName: string
 ) => {
-	const sessionRef = doc(db, 'sessions');
+	const sessionRef = collection(db, 'sessions');
+	const currentTimeMillis = Date.now();
 	const sessionData: SessionMeta = {
 		authorId: userId,
 		authorDisplayName,
 		authenticatedUserIds: [],
 		question,
 		seed: generateSeed(),
-		createdAt: new Date(),
-		updatedAt: new Date()
+		createdAt: currentTimeMillis,
+		updatedAt: currentTimeMillis,
+		totpInterval: 30
 	};
-	await setDoc(sessionRef, sessionData);
+	const newSession = await addDoc(sessionRef, sessionData);
+	return newSession.id;
+};
+
+export const generatePasscode = async (
+	seed: string,
+	timeDifference: number,
+	secondInterval: number
+): Promise<string> => {
+	// Create a SHA-256 hash of the seed and counter
+	const interval = secondInterval * 1000;
+
+	const hashedSeed = await hashData(seed + Math.floor(timeDifference / interval));
+
+	// Convert the hashed seed to a numeric value
+	const numericHashedSeed = parseInt(hashedSeed, 16);
+
+	// Generate a 6-digit passcode
+	const passcode = numericHashedSeed % 1000000;
+
+	// Return the passcode as a string, padded with zeros if necessary
+	return passcode.toString().padStart(6, '0');
 };
 
 type ResponseMeta = {
-	submittedBy: string;
+	authorId: string;
 	displayName: string;
 	response: string;
-	createdAt: Date;
-	updatedAt: Date;
+	createdAt: number;
+	updatedAt: number;
 };
 
 export const submitResponse = async (
 	userId: string,
 	sessionId: string,
 	response: string,
-	displayName: string
+	displayName: string,
+	responseId?: string
 ) => {
-	const responsesRef = doc(db, 'sessions', sessionId, 'responses');
+	const currentTime: number = Date.now();
+	const responsesRef = collection(db, 'sessions', sessionId, 'responses');
 	const responseMeta: ResponseMeta = {
-		submittedBy: userId,
+		authorId: userId,
 		displayName,
 		response,
-		createdAt: new Date(),
-		updatedAt: new Date()
+		createdAt: currentTime,
+		updatedAt: currentTime
 	};
-	await setDoc(responsesRef, responseMeta);
+	let fbError = '';
+	let docId = null;
+	if (responseId) {
+		const docRef = doc(responsesRef, responseId);
+		await setDoc(docRef, responseMeta).catch((error) => {
+			fbError = error;
+		});
+	} else {
+		const response = await addDoc(responsesRef, responseMeta).catch((error) => {
+			fbError = error;
+		});
+		docId = response?.id;
+	}
+
+	return { responseId: docId ?? responseId, error: fbError };
 };
+
+// export const getAuthUrl = (passcode: string, sessionId: string) => {
+//     const authBaseUrl = import.meta.env.VITE_SESSION_AUTH_BASE_URL;
+//     const authPath = import.meta.env.VITE_SESSION_AUTH_PATH;
+
+//     return `${authBaseUrl}/${authPath}?sessionId=${sessionId}&passcode=${passcode}`;
+// };

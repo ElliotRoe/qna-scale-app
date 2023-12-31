@@ -7,6 +7,6 @@ export default defineConfig({
 		sveltekit(),
 		Icons({
 			compiler: 'svelte'
-		})
-	]
+		}),
+	],
 });
