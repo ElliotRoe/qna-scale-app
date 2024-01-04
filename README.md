@@ -19,7 +19,7 @@ Intellecture is a pedagogy-agnostic tool. From making discussion-based flipped c
 1. Sign-in
 2. Create a discussion question
 3. Get responses
-4. Immediately identify trends, topics, and themes of responses
+4. Click "Generate Topics" and immediately identify trends, topics, and themes of responses
 5. Discuss! Review! Teach!
 
 Click [here](https://qna-scale-app.vercel.app/sign-up) to try!
