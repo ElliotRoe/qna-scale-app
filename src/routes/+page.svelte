@@ -1,5 +1,6 @@
 <script>
 	import { Button } from "$lib/components/ui/button";
+	import Separator from "$lib/components/ui/separator/separator.svelte";
 
 	import { createNewSession } from "$lib/session-management";
 
@@ -11,14 +12,25 @@
 </svelte:head>
 
 <section class="grow">
-	<div class="flex flex-row justify-center items-center max-w-app">
-		<div class="flex flex-col space-y-5 items-center mt-20">
-			<h1 class="text-6xl font-bold font-soft text-center">Engage classrooms at scale</h1>
-			<a href="create">
+	<div class="flex flex-row justify-center items-center max-w-app h-screen">
+		<div class="flex flex-col space-y-8 items-center">
+			<div class="flex flex-row space-x-2 justify-center items-center">
+				<h1 class="text-6xl font-bold text-center">🙋⚡️</h1>
+				<Separator orientation="vertical" class="h-20"/>
+				<div class="flex flex-col">
+					<h1 class="text-6xl font-bold">Intellecture</h1>
+					<h2 class="text-2xl font-bold text-slate-600">Engage at scale</h2>
+				</div>
+			</div>
+			<div class="flex flex-row space-x-2">
 				<a href="/sign-up">
-					<Button>Try Now</Button>
+					<Button>⚡️ Try Now</Button>
 				</a>
-			</a>
+				<a href="https://github.com/ElliotRoe/qna-scale-app">
+					<Button variant="outline">Learn More</Button>
+				</a>
+			</div>
+
 		</div>
 		<!-- <div class="shadow-sm border rounded-xl p-10 py-20">
 			<svg width="285" height="285" viewBox="0 0 285 285" fill="none" xmlns="http://www.w3.org/2000/svg">
