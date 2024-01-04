@@ -8,7 +8,7 @@ Intellecture is an online tool to engage classrooms of any size. Traditionally, 
 
 Intellecture is a pedagogy-agnostic tool. From making discussion-based flipped classrooms possible at the scale of hundreds to a simple check-in question with a class of twenty, teach the same way. **Teach your way.**
 
-## The problem
+## Inspiration
 
 > "Furthermore, not attendance itself but rather in-class engagement is responsible for students’ success. Consequently, the question that arises is how engagement, particularly in large classes with hundreds of students, can be enhanced."<sup>1<sup/>
 
